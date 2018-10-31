@@ -1,0 +1,138 @@
+#include <iostream>
+#include <string>
+#include <locale.h>
+ 
+using namespace std;
+ 
+bool availableSeat(int row, int column, string seatMap[10][16]) { //uma função que analiza se o assento selecionado está disponível e retorna um bool
+    if ((row <= 10) && (column <= 16) && (seatMap[row][column] == "O")) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+ 
+ 
+void seatMap(string seats[10][16]) {
+ 
+    //MOSTRA O MAPA COM ASSENTOS
+    int displayColumns = 16;  //o número que será mostrado para as colunas
+    cout << endl << "\n\t\t\t\t\t\t\t   Colunas\n";
+    cout << endl << "\t\t\t\t     1  2  3  4     5  6  7  8  9  10 11 12    13 14 15";
+ 
+    //mostra os números das colunas
+    for (int column = 0; column < 1; column++) { //repete para cada numero de fileiras(linhas)
+ 
+        if (displayColumns == 7 || displayColumns == 23) { //adiciona um espaço vazio aqui
+            cout << "   ";
+        }
+ 
+        displayColumns = displayColumns++;  //começa adicionando 1, porque a primeira coluna é 1, não 0
+ 
+ //quando o número da coluna é maior do que 9, o espaço entre os números das colunas tem que ser menor, por causa do espaço aumentado na ocupação de 2 digitos
+        if (displayColumns > 9) {
+            cout << " " << displayColumns;  
+        }
+        else {
+            cout << "  " << displayColumns;
+        }
+    }
+ 
+    //mostra as fileiras(linhas)
+    for (int row = 0; row < 10; row++) {
+        cout << endl << "\t\t\tFileira " << row + 1 << "   ";
+ 
+        if (row < 9) {
+            cout << " "; //um espaço extra é adicionado se sua linha for menor do que 10 para compensar por não ter 2 digitos
+        }
+        for (int column = 0; column < 16; column++) {
+            if (column == 4 || column == 12) {
+                cout << "   ";  //adiciona o espaço aumentado aqui
+            }
+            cout << seats[row][column] << "  ";  //repete um total de (lin*col) vezes, para cada coluna em cada linha, mostrando todos os assentos salvos (O ou X)
+ 
+        }
+    }
+}
+ 
+int main() {
+	setlocale(LC_ALL, "Portuguese");
+    char type;  //tipo de assento sendo comprado (por razões de preço)
+    int numbTickets;  //numero de ingressos que vai comprar
+    int buyingRow = 0;    //a linha aonde o assento comprado está localizado
+    int buyingColumn = 0;     //a coluna aonde o assento comprado está localizado
+    double totalPrice = 0;     //o preço total dos ingressos
+    string seats[10][16];      //aonde o valor dos assentos será guardado: assentos vazios (O) ou ocupados (X)
+ 
+//INTRO para o usuário do programa (mostra os preços e opções de compras)
+	cout << "\n";
+    cout << "\t\t\t  Sejam bem-vindos ao Teatro da Universidade Paulista!\n\n";
+    cout << "\t\t\t\t  Você assistirá a peça de Dom Quixote\n";
+    cout << endl << "\t\t\t\t\tPreços dos ingressos:\n";
+    cout << endl << "\t\t\t\t\tNormal:        R$18.00";
+    cout << endl << "\t\t\t\t\tMeia-entrada*: R$9.00";
+    cout << endl << "\t\t\t\t\tEspecial**\n\n";
+    cout << endl << "\n\n\n\n\n\n\n";
+    cout << endl << "*Estudantes, Crianças(de 2 a 12 anos), Idosos a partir dos 60 anos e Professores da rede pública";
+    cout << endl << "**Preço especial disponível durante as terças-feiras destinado a crianças carentes da rede pública de ensino";
+    cout << endl << "\n\n\n\n";
+    cout << endl << "\t\t\t\t     Gostaria de comprar ingresso(s) para esta peça?";
+    cout << endl << "\t\t\t\t(N para Normal, M para Meia-entrada, E para Especial): ";
+    cin >> type;
+ 
+    //um loop para ter certeza que o usuário colocou uma resposta aceitável
+    while ((toupper(type) != 'N') && (toupper(type) != 'M')){// && (toupper(type) != 'E')) {
+        cout << endl << "\n\t\t\t\tDesculpe, nós não temos esta opção. Por favor tente novamente: ";
+        cin >> type;
+    }
+ 
+    //coloca todos os assentos como vazio
+    for (int row = 0; row < 10; row++) {
+        for (int column = 0; column < 16; column++) {
+            seats[row][column] = "O";
+        }
+    }
+ 
+ 
+    seatMap(seats);   //chama uma função que mostra todos os assentos com as informações (X ou O) salvas
+ 
+    cout << endl << "\n\t\t\tQuanto(s) ingresso(s) deseja comprar? ";
+    cin >> numbTickets;  //o usuário coloca o número de ingressos
+ 
+    for (int x = 0; x < numbTickets; x++) {    //repete pela quantidade de ingressos que está sendo comprado
+ 
+        //adiciona o preço do ingressos para o total dependendo do tipo de ingresso comprado
+                if (toupper(type) == 'N') {
+                    totalPrice = totalPrice + 18.00;
+                }
+                if (toupper(type) == 'M') {
+                	totalPrice = totalPrice + 9.00;
+				}
+ 
+        while (true) {
+            //o usuário escolhe a posição de sua cadeira
+            cout << endl << endl << "\t\t\tVocê deseja comprar o(s) ingresso(s) na:";
+            cout << endl << " \t\t\t\tFileira ";
+            cin >> buyingRow;
+            buyingRow = buyingRow - 1;
+            cout << " \t\t\t\tColuna ";
+            cin >> buyingColumn;
+            buyingColumn = buyingColumn - 1; //(o 1 é subtraido, porque o que ele considera linha 1 é na verdade linha 0 para o computador)
+ 
+//se o assento estiver disponível:
+            if (availableSeat(buyingRow, buyingColumn, seats) == true) {
+                seats[buyingRow][buyingColumn] = "X";   //o assento é colocado como reservado
+                      break; //finaliza o loop
+            }
+            else { //se o assento não estiver disponível, o usuário terá que tentar novamente
+                cout << endl << "Desculpe, este assento não está disponivel";
+            }
+        }
+    }
+ 
+    seatMap(seats); //mostra o novo mapa de assentos com todos assentos reservados
+ 
+        cout << endl << endl << "\t\t\tO valor total de seu(s) ingresso(s) são : R$" << totalPrice << ".00"; //mostra o preço total da compra atual
+ 
+}
